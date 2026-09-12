@@ -26,7 +26,7 @@ class Events(models.Model):
     total_sets = models.IntegerField()
     available_sets = models.IntegerField()
     price = models.IntegerField()
-    Image = models.ImageField()
+    Image = models.ImageField(upload_to=Image_path,blank=True, null=True)
     
     
     def __str__(self):
