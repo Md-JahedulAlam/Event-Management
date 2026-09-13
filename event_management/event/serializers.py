@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from accounts.models import User
 from .models import *
 
 class CategorySerializers(serializers.ModelSerializer):
@@ -17,6 +18,7 @@ class EventSerializers(serializers.ModelSerializer):
     class Meta:
         model = Events
         fields = [
+            'id',
             'title',
             'description',
             'category',
@@ -28,4 +30,28 @@ class EventSerializers(serializers.ModelSerializer):
             'available_sets',
             'price',
             'Image',
+        ]
+        
+        
+class userSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields =[
+            "id",
+            "username",
+            "email",
+            "phone_number"
+        ]
+class BookingSerializer(serializers.ModelSerializer):
+    # username = serializers.CharField(source="user", read_only=True)
+    user = userSerializers(read_only=True)
+    event = EventSerializers(read_only=True)
+    class Meta:
+        model = Booking
+        fields =[
+            "user",
+            "event",
+            "number_of_tickets",
+            "total_price",
+            "booking_time",
         ]
