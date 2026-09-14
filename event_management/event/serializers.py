@@ -8,6 +8,8 @@ class CategorySerializers(serializers.ModelSerializer):
         fields = '__all__'
         
 class EventSerializers(serializers.ModelSerializer):
+    is_completed =serializers.ReadOnlyField()
+    
     category = CategorySerializers(read_only=True)
     
     category_post = serializers.PrimaryKeyRelatedField(
@@ -30,6 +32,7 @@ class EventSerializers(serializers.ModelSerializer):
             'available_sets',
             'price',
             'Image',
+            'is_completed',
         ]
         
         
@@ -49,6 +52,7 @@ class BookingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Booking
         fields =[
+            "id",
             "user",
             "event",
             "number_of_tickets",

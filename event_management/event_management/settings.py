@@ -31,7 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(hours=2),
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=7),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
 }
 
@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     
     'rest_framework',
     'django_filters',
+    'corsheaders',
     
 
     'accounts',
@@ -57,6 +58,7 @@ AUTH_USER_MODEL = 'accounts.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -127,7 +129,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-
+CORS_ALLOWED_ORIGINS = ["http://localhost:5173"]
 
 # Internationalization
 # https://docs.djangoproject.com/en/6.1/topics/i18n/

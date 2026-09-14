@@ -7,9 +7,6 @@ router = DefaultRouter()
 router.register('category', CategoryViewSet)
 router.register('event', EventsViewsets)
 
-# router.register('bookings', BookingView)
-# router.register('boookings/<int:id>/cancel/', BookingCancelView)
-# router.register('my-booking', MyBookingHistoryView)
 
 urlpatterns = router.urls + [
 

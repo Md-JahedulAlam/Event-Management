@@ -1,3 +1,5 @@
+from django.utils import timezone
+
 from django.db import models
 from django_cleanup import cleanup
 # from django.contrib.auth.models import User
@@ -29,6 +31,10 @@ class Events(models.Model):
     available_sets = models.IntegerField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
     Image = models.ImageField(upload_to=Image_path,blank=True, null=True)
+    
+    @property
+    def is_completed(self):
+        return self.event_date < timezone.localdate()
     
     def __str__(self):
         return self.title

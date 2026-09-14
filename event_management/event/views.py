@@ -53,7 +53,7 @@ class BookingView(APIView):
         event.save()
         return Response(
              {
-                "name" : User.username,
+                "name" : request.user.username,
                 "message": "Ticket booked successfully",
                 "tickets": number_of_tickets,
                 "price_per_ticket": event.price,
@@ -84,8 +84,6 @@ class BookingCancelView(APIView):
             status=status.HTTP_200_OK
         )
         
-
-
 
 
 class MyBookingHistoryView(ListAPIView):
