@@ -41,8 +41,18 @@ class Events(models.Model):
 
 
 class Booking(models.Model):
+    STATUS_CHOICES = (
+            ("pending", "Pending"),
+            ("confirmed", "Confirmed"),
+            ("cancelled", "Cancelled"),
+    )
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     event = models.ForeignKey(Events, on_delete=models.CASCADE)
     number_of_tickets = models.PositiveIntegerField()
     booking_time = models.DateTimeField(auto_now_add=True)
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
+    status = models.CharField(choices=STATUS_CHOICES, default="pending")
+    
+    def __str__(self):
+        return f"{self.user.email} - {self.event.title}"
+    

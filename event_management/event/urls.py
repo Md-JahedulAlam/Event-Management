@@ -15,4 +15,5 @@ urlpatterns = router.urls + [
     path("my-bookings/<int:booking_id>/cancel/", BookingCancelView.as_view(), name="booking-cancel"),
 
     path("my-bookings/", MyBookingHistoryView.as_view(), name="my-bookings"),
+    path("bookings/<int:booking_id>/status/",BookingView.as_view()),
 ]

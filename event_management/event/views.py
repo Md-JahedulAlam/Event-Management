@@ -27,9 +27,22 @@ class EventsViewsets(viewsets.ModelViewSet):
     search_fields = ['title']
     ordering_fields=['price', 'event_date']
     
+    def get_queryset(self):
+        queryset = Events.objects.all().order_by("-event_date")
+        if not self.request.user.is_staff:
+            queryset = queryset.filter(
+                event_date__gte=timezone.localdate()
+            )
+        return queryset
+    
 
 class BookingView(APIView):
     permission_classes =[IsAuthenticated]
+    def get(self, request):
+        bookings = Booking.objects.all().order_by("-booking_time")
+        serializer = BookingSerializer(bookings, many=True)
+        return Response(serializer.data)
+    
     def post(self, request):
         event_id = request.data.get("event")
         number_of_tickets = int(request.data.get("number_of_tickets"))
@@ -61,7 +74,47 @@ class BookingView(APIView):
             },
             status=status.HTTP_201_CREATED
         )
-        
+
+    def patch(self, request, booking_id):
+            try:
+                booking = Booking.objects.get(id=booking_id)
+            except Booking.DoesNotExist:
+                return Response(
+                    {"error": "Booking not found"},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+    
+            new_status = request.data.get("status")
+    
+            if new_status not in ["pending", "confirmed", "cancelled"]:
+                return Response(
+                    {"error": "Invalid status"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+    
+            booking.status = new_status
+            booking.save()
+    
+            serializer = BookingSerializer(booking)
+    
+            return Response(
+                serializer.data,
+                status=status.HTTP_200_OK
+            )
+    def get(self, request):
+        bookings = Booking.objects.all().order_by("-booking_time")
+    
+        status_filter = request.query_params.get("status")
+    
+        if status_filter:
+            bookings = bookings.filter(status=status_filter)
+    
+        serializer = BookingSerializer(
+            bookings,
+            many=True
+        )
+        return Response(serializer.data)
+            
 class BookingCancelView(APIView):
     permission_classes = [IsAuthenticated]
 

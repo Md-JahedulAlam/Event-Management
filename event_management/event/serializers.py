@@ -43,7 +43,6 @@ class userSerializers(serializers.ModelSerializer):
             "id",
             "username",
             "email",
-            "phone_number"
         ]
 class BookingSerializer(serializers.ModelSerializer):
     # username = serializers.CharField(source="user", read_only=True)
@@ -58,4 +57,5 @@ class BookingSerializer(serializers.ModelSerializer):
             "number_of_tickets",
             "total_price",
             "booking_time",
+            "status",
         ]
