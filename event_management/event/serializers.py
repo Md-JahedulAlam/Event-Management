@@ -57,5 +57,5 @@ class BookingSerializer(serializers.ModelSerializer):
             "number_of_tickets",
             "total_price",
             "booking_time",
-            "status",
+            "qr_code",
         ]

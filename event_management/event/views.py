@@ -5,12 +5,17 @@ from rest_framework import viewsets, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.generics import ListAPIView
+from django.core.files import File
 # from rest_framework.permissions import AllowAny
 from .permissions import IsAdminOrReadOnly
 from rest_framework.permissions import IsAuthenticated
 
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
+
+import qrcode
+from io import BytesIO
+
 # Create your views here.
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -56,12 +61,49 @@ class BookingView(APIView):
             )
         total_price = event.price * number_of_tickets
         
-        Booking.objects.create(
+        booking = Booking.objects.create(
             user = request.user,
             event = event,
             number_of_tickets = number_of_tickets,
             total_price=total_price
         )
+        
+        # QR Code data
+        qr_data = f"""
+        Booking ID: {booking.id}
+        Username: {booking.user.username}
+        Email: {booking.user.email}
+        
+        Event: {booking.event.title}
+        Category: {booking.event.category.name}
+        Location: {booking.event.locations}
+        
+        Event Date: {booking.event.event_date}
+        Event Time: {booking.event.event_time}
+        
+        Number of Tickets: {booking.number_of_tickets}
+        Price Per Ticket: {booking.event.price}
+        Total Price: {booking.total_price}
+        
+        Booking Date: {booking.booking_time.strftime('%d-%m-%Y')}
+        Booking Time: {booking.booking_time.strftime('%I:%M %p')}
+        """
+
+        # Generate QR
+        qr_image = qrcode.make(qr_data)
+
+        # Save QR in memory
+        buffer = BytesIO()
+        qr_image.save(buffer, format="PNG")
+        buffer.seek(0)
+
+        # Save QR to model
+        booking.qr_code.save(
+            f"booking_{booking.id}.png",
+            File(buffer),
+            save=True
+        )
+        
         event.available_sets -= number_of_tickets
         event.save()
         return Response(
@@ -83,16 +125,7 @@ class BookingView(APIView):
                     {"error": "Booking not found"},
                     status=status.HTTP_404_NOT_FOUND
                 )
-    
-            new_status = request.data.get("status")
-    
-            if new_status not in ["pending", "confirmed", "cancelled"]:
-                return Response(
-                    {"error": "Invalid status"},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-    
-            booking.status = new_status
+
             booking.save()
     
             serializer = BookingSerializer(booking)
@@ -103,11 +136,7 @@ class BookingView(APIView):
             )
     def get(self, request):
         bookings = Booking.objects.all().order_by("-booking_time")
-    
-        status_filter = request.query_params.get("status")
-    
-        if status_filter:
-            bookings = bookings.filter(status=status_filter)
+
     
         serializer = BookingSerializer(
             bookings,
