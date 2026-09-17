@@ -27,6 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     "event-management-m58t.onrender.com",
+    "127.0.0.1",
+    "localhost",
 ]
 
 
