@@ -3,6 +3,8 @@
 A Django REST Framework backend for an event booking/management system — handles event listings, categories, ticket bookings (with QR code generation), and JWT-based authentication.
 
 **Repository:** https://github.com/Md-JahedulAlam/Event-Management
+
+
 **Live API:** https://event-management-m58t.onrender.com/
 
 ## Tech Stack
@@ -20,10 +22,6 @@ A Django REST Framework backend for an event booking/management system — handl
 ---
 
 ## 1. Project Setup
-
-### Prerequisites
-- Python 3.x
-- pip
 
 ### Steps
 
